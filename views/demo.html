@@ -1,0 +1,16 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>{{.WebTitle}}</title>
+    </head>
+    <body>
+        <h1>This is a small sample!</h1>
+        <h3>now is {{.Date}}</h3>
+        <h3>Welcome those gays:</h3>
+        <ul>
+            {{range .Gays}}
+            <li>{{.}}</li>
+            {{end}}
+        </ul>
+    </body>
+</html>
