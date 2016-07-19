@@ -6,6 +6,7 @@ import (
 )
 
 func init() {
+	jewel.Router("/static/", &handler.StaticResourceHandler{})
 	jewel.Router("/demo", &handler.DemoHandler{})
 	jewel.Router("/login", &handler.LoginRequestHandler{})
 }
