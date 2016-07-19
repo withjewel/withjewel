@@ -1,6 +1,10 @@
 # withjewel
 网站 http://www.withjewel.com 的golang后端
 
+### TODO
+* 实现对于cookie和session的基本支持
+* 实现对于Url pattern的正则支持
+
 ### 说明
 暂时没有使用任何第三方web框架, 之后会根据具体要求不断完善jewel这个自建简易“框架”吧。
 
