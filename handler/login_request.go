@@ -2,7 +2,7 @@ package handler
 
 import (
 	"fmt"
-	"../../withjewel/jewel"
+	"withjewel/jewel"
 )
 
 /*LoginRequestHandler 处理登录请求 */
