@@ -1,8 +1,8 @@
 package main
 
 import (
-	"withjewel/jewel"
 	"withjewel/handler"
+	"withjewel/jewel"
 )
 
 func init() {
