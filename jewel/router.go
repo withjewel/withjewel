@@ -23,6 +23,6 @@ func (h *Handler) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 
 func Router(url string, controllerInterface ControllerInterface) {
 	handler := &Handler{controllerInterface, nil, nil}
-	fmt.Println(handler)
+	fmt.Printf("url: %s, handler: %s\n", url, handler)
 	http.Handle(url, handler)
 }

@@ -1,7 +1,7 @@
 package handler
 
 import (
-	"withjewel/jewel"
+	"../../withjewel/jewel"
 	"time"
 	"fmt"
 )
