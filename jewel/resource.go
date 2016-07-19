@@ -1,33 +1,27 @@
 package jewel
 
 import (
-    "io/ioutil"
-    "fmt"
-    "os"
-    "path/filepath"
-    "strings"
+	"fmt"
+	"net/http"
+	"strings"
 )
 
-/*Get 获取name指定的资源
-*/
-func Get(name string)([]byte, error) {
-    name = strings.Replace(name, "/", "\\", -1)
-    programAbsDir, err := filepath.Abs(filepath.Dir(os.Args[0]))
-    bytes, err := ioutil.ReadFile(programAbsDir + name)
-    if err != nil {
-        fmt.Printf("在读取文件%s的时候失败。\n", programAbsDir + name)
-        return nil, err
-    }
-    return bytes, err
+type StaticFileHandler struct {
+	Controller
+	DirName   string
+	URIPrifix string
 }
 
-/**
- * 判断文件是否存在  存在返回 true 不存在返回false
- */
-func checkFileIsExist(filename string) (bool) {
- var exist = true;
- if _, err := os.Stat(filename); os.IsNotExist(err) {
-  exist = false;
- }
- return exist;
+func (h *StaticFileHandler) Get() {
+	filename := strings.TrimLeft(h.Input.RequestURI, "/")
+	http.ServeFile(h.Output, h.Input, filename)
+}
+
+/*用于注册静态文件文件夹*/
+func ServeStatic(dirName string) {
+	handler := new(StaticFileHandler)
+	handler.DirName = dirName
+	handler.URIPrifix = fmt.Sprintf("/%s/", dirName)
+
+	Router(handler.URIPrifix, handler)
 }
