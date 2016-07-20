@@ -6,21 +6,19 @@ import (
 
 type Handler struct {
 	ControllerInterface
-	Input  *http.Request
-	Output http.ResponseWriter
 }
 
-func (h *Handler) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
-	h.Init(rw, r)
+func (h *Handler) ServeHTTP(responseWriter http.ResponseWriter, request *http.Request) {
+	h.Init(responseWriter, request)
 	switch {
-	case r.Method == "GET":
+	case request.Method == "GET":
 		h.Get()
-	case r.Method == "POST":
+	case request.Method == "POST":
 		h.Post()
 	}
 }
 
 func Router(url string, controllerInterface ControllerInterface) {
-	handler := &Handler{controllerInterface, nil, nil}
+	handler := &Handler{controllerInterface}
 	http.Handle(url, handler)
 }

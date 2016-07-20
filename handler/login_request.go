@@ -12,8 +12,8 @@ type LoginRequestHandler struct {
 
 /*Get 发送登录页面 */
 func (this *LoginRequestHandler) Get() {
-	jewel.RenderTplFile(this.Output, "views/login.html", nil)
-	fmt.Printf("用户请求登录，从%s\n", this.Input.RequestURI)
+	jewel.RenderTplFile(this.Ctx.Output, "views/login.html", nil)
+	fmt.Printf("用户请求登录，从%s\n", this.Ctx.Input.RequestURI)
 }
 
 /*Post 验证登录*/

@@ -16,7 +16,5 @@ func (d *DemoHandler) Get() {
 	model["WebTitle"] = "with jewel"
 	model["Date"] = time.Now()
 	model["Gays"] = []string{"Jiaju.chen", "Nan.li"}
-	fmt.Println(model)
-	//d.Output.Write([]byte("helo"))
-	jewel.RenderTplFile(d.Output, "views/demo.html", model)
+	jewel.RenderTplFile(d.Ctx.Output, "views/demo.html", model)
 }

@@ -6,8 +6,12 @@ import (
 
 type Controller struct {
 	Name   string
+	Ctx    RequestContext
+}
+
+type RequestContext struct {
+	Input *http.Request
 	Output http.ResponseWriter
-	Input  *http.Request
 }
 
 type ControllerInterface interface {
@@ -16,15 +20,15 @@ type ControllerInterface interface {
 	Post()
 }
 
-func (h *Controller) Init(rw http.ResponseWriter, req *http.Request) {
-	h.Output = rw
-	h.Input = req
+func (h *Controller) Init(responseWriter http.ResponseWriter, request *http.Request) {
+	h.Ctx.Input = request
+	h.Ctx.Output = responseWriter
 }
 
 func (h *Controller) Get() {
-	http.Error(h.Output, "Method Not Allowed", 405)
+	http.Error(h.Ctx.Output, "Method Not Allowed", 405)
 }
 
 func (h *Controller) Post() {
-	http.Error(h.Output, "Method Not Allowed", 405)
+	http.Error(h.Ctx.Output, "Method Not Allowed", 405)
 }

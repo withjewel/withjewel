@@ -13,8 +13,8 @@ type StaticFileHandler struct {
 }
 
 func (h *StaticFileHandler) Get() {
-	filename := strings.TrimLeft(h.Input.RequestURI, "/")
-	http.ServeFile(h.Output, h.Input, filename)
+	filename := strings.TrimLeft(h.Ctx.Input.RequestURI, "/")
+	http.ServeFile(h.Ctx.Output, h.Ctx.Input, filename)
 }
 
 /*用于注册静态文件文件夹*/
