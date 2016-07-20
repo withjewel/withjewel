@@ -16,42 +16,60 @@
 			-o-background-size: filled;
 			background-size: filled;
 			}
+
+			div.logo-title h1 {
+				position: absolute;
+				bottom: 50px;
+				right: 2px;
+			}
+
+			#loginForm {
+				background-color: rgba(255, 255, 255, 1);
+				border-radius: 4px;
+				width: 350px;
+				height: 150px;
+				margin: auto;
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				margin-top: -75px;
+				margin-left: -175px;
+				padding: 20px 0 50px 0;
+			}
+
+			div.message {
+				background-color: red;
+				width: 80%;
+				margin: auto;
+				padding: 5px;
+			}
+
+			div.message:hover {
+				font-size: 20px;
+			}
+
 			input {
-			border-radius: 5px;
-			text-align: center;
-			height: 30px;
-			width: 250px;
+				width: 80%;
+				height: 35px;
+				margin: 10px 10%;
 			}
-			.user,
-			.code {
-			width: 250px;
-			height: 5%;
-			margin-left: 35%;
+
+			input.loginButton {
+				display: block;
+				height: 50px;
 			}
-			.loginDiv {
-			width: 40%;
-			height: 30%;
-			margin-top: 2%;
-			margin-left: 35%;
-			}
-			.loginButton {
-			text-align: center;
-			width: 254px;
-			height: 34px;
-			border-radius: 5px;
-			}
-			.user {
-				margin-top: 10%;
-			}
-			.code {
-				margin-top: 2%
-			}
+
 		</style>
     </head>
     <body>
-		<img src="static/images/logo.png" alt="LOGO" />
-        <h1>在这儿获得最好的阅读体验。</h1>
+    	<div class="logo-title">
+			<img id="logo" src="static/images/logo.png" alt="LOGO" />
+        	<h1>在这儿获得最好的阅读体验。</h1>
+    	</div>
 		<form action="" name="loginForm" id="loginForm" action="login" method="post">
+			<div class="message">
+				{{with .}} <p>{{.loginStatus}} - {{.loginMessage}}</p> {{end}}
+			</div>
 			<div class="user">
 				<input type="text" name="username" placeholder="用户名或者电邮地址"/>
 			</div>

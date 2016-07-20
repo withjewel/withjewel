@@ -18,7 +18,13 @@ func (this *LoginRequestHandler) Get() {
 
 /*Post 验证登录*/
 func (this *LoginRequestHandler) Post() {
-	username := this.Input.FormValue("username")
-	fmt.Printf("%s请求登录\n", username)
-	this.Output.Write(nil)
+	username := this.Ctx.Input.FormValue("username")
+	password := this.Ctx.Input.FormValue("password")
+
+	model := make(map[string]string)
+	model["loginStatus"] = "Failed"
+	model["loginMessage"] = "Error password"
+	
+	fmt.Printf("%s请求登录, 密码%s\n", username, password)
+	jewel.RenderTplFile(this.Ctx.Output, "views/login.html", model)
 }
