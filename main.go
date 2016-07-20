@@ -13,5 +13,5 @@ func init() {
 }
 
 func main() {
-	jewel.Run(":8080")
+	jewel.Run(":80")
 }

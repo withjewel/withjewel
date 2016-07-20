@@ -15,3 +15,10 @@ func (this *LoginRequestHandler) Get() {
 	jewel.RenderTplFile(this.Output, "views/login.html", nil)
 	fmt.Printf("用户请求登录，从%s\n", this.Input.RequestURI)
 }
+
+/*Post 验证登录*/
+func (this *LoginRequestHandler) Post() {
+	username := this.Input.FormValue("username")
+	fmt.Printf("%s请求登录\n", username)
+	this.Output.Write(nil)
+}
