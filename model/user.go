@@ -35,7 +35,7 @@ func Verify(username string, password string) bool {
 	var user User
 	err = result.Scan(&user.id, &user.username, &user.password, &user.email)
 	if err != nil {
-		panic(err)
+		return false
 	}
 
 	fmt.Println(user)
