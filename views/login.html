@@ -67,9 +67,9 @@
         	<h1>在这儿获得最好的阅读体验。</h1>
     	</div>
 		<form action="" name="loginForm" id="loginForm" action="login" method="post">
-			<div class="message">
-				{{with .}} <p>{{.loginStatus}} - {{.loginMessage}}</p> {{end}}
-			</div>
+			{{with .}} <div class="message">
+				<p>{{.loginStatus}} - {{.loginMessage}}</p>
+			</div> {{end}}
 			<div class="user">
 				<input type="text" name="username" placeholder="用户名或者电邮地址"/>
 			</div>

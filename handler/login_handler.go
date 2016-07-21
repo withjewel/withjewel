@@ -5,6 +5,7 @@ import (
 	"regexp"
 	"withjewel/jewel"
 	"withjewel/model"
+	"net/http"
 )
 
 /*LoginRequestHandler 处理登录请求 */
@@ -14,8 +15,16 @@ type LoginRequestHandler struct {
 
 /*Get 发送登录页面 */
 func (this *LoginRequestHandler) Get() {
-	jewel.RenderTplFile(this.Ctx.Output, "views/login.html", nil)
-	fmt.Printf("用户请求登录，从%s\n", this.Ctx.Input.RequestURI)
+	datamodel := make(map[string]string)
+	username, err := this.Cookie("username")
+
+	if err == nil && username == "leslie" {
+		datamodel["loginStatus"] = "true"
+		datamodel["loginUser"] = username
+		fmt.Println(datamodel)
+	} else {
+		jewel.RenderTplFile(this.Ctx.Output, "views/login.html", nil)
+	}
 }
 
 /*Post 验证登录*/
@@ -55,6 +64,10 @@ func (this *LoginRequestHandler) Post() {
 	if pass {
 		datamodel["loginStatus"] = "成功"
 		datamodel["loginMessage"] = "欢迎您"
+		cookie := &http.Cookie{Name: "username", Value: username}
+		this.SetCookie(cookie)
+		//this.Redirect("/index")
+		//return
 	}
 
 	//fmt.Printf("%s请求登录, 密码%s\n", username, password)
