@@ -20,7 +20,7 @@ func (this *LoginRequestHandler) Get() {
 
 /*Post 验证登录*/
 func (this *LoginRequestHandler) Post() {
-	UsernameRegex := regexp.MustCompile(`[A-Za-z0-9]{4}`)
+	UsernameRegex := regexp.MustCompile(`[A-Za-z0-9]{4,17}`)
 	EmailRegex := regexp.MustCompile(`\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*`)
 
 	username := this.Ctx.Input.FormValue("username")

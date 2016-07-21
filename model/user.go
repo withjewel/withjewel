@@ -10,6 +10,7 @@ import (
 type User struct {
 	id                 int
 	username, password string
+	email              sql.NullString
 }
 
 func Verify(username string, password string) bool {
@@ -32,9 +33,9 @@ func Verify(username string, password string) bool {
 		return false
 	}
 	var user User
-	err = result.Scan(&user.id, &user.username, &user.password)
+	err = result.Scan(&user.id, &user.username, &user.password, &user.email)
 	if err != nil {
-		return false
+		panic(err)
 	}
 
 	fmt.Println(user)
@@ -61,7 +62,7 @@ func VerifyEmail(email string, password string) bool {
 		return false
 	}
 	var user User
-	err = result.Scan(&user.id, &user.username, &user.password)
+	err = result.Scan(&user.id, &user.username, &user.password, &user.email)
 	if err != nil {
 		return false
 	}
