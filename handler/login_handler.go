@@ -2,10 +2,10 @@ package handler
 
 import (
 	"fmt"
+	"net/http"
 	"regexp"
 	"withjewel/jewel"
 	"withjewel/model"
-	"net/http"
 )
 
 /*LoginRequestHandler 处理登录请求 */
@@ -50,10 +50,13 @@ func (this *LoginRequestHandler) Post() {
 				datamodel["loginMessage"] = "错误的用户名或密码，或许您需要填写一个电子邮件来加入？"
 			}
 		} else if len(EmailRegex.FindString(username)) == len(username) {
-			pass = model.VerifyEmail(username, password)
-			if !pass {
+			exist, pass := model.VerifyEmail(username, password)
+			if !exist {
 				datamodel["loginStatus"] = "成功"
 				datamodel["loginMessage"] = "我们已经向" + username + "发送了一封确认电子邮件。"
+			} else if !pass {
+				datamodel["loginStatus"] = "失败"
+				datamodel["loginMessage"] = "错误的密码。"
 			}
 		} else {
 			datamodel["loginStatus"] = "失败"
