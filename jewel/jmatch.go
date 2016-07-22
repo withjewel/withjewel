@@ -10,7 +10,8 @@ import (
 
 type urlPattern struct {
 	origURL     string
-	cvtedURL    string
+	cvtedURL    string // 暂时留作调试用，其实每次创建urlPattern都会调用MustCompiler强制转换为pat
+	pat         *regexp.Regexp
 	groupVarMap map[int]string
 	handler     interface{}
 }
@@ -78,6 +79,7 @@ func (this *JewelMatchSystem) AddURL(url string, h interface{}) {
 			return regpat
 		}
 	})
+	newURLPattern.pat = regexp.MustCompile(newURLPattern.cvtedURL)
 
 	this.handlerURLPatternMap = append(this.handlerURLPatternMap, newURLPattern)
 }
@@ -88,8 +90,7 @@ func (this *JewelMatchSystem) AddURL(url string, h interface{}) {
 func (this *JewelMatchSystem) Match(url string) interface{} {
 	for _, up := range this.handlerURLPatternMap {
 		fmt.Printf("尝试匹配模式%s...\n", up.cvtedURL)
-		pat := regexp.MustCompile(up.cvtedURL)
-		submatchs := pat.FindStringSubmatch(url)
+		submatchs := up.pat.FindStringSubmatch(url)
 		if submatchs != nil {
 			for k, v := range up.groupVarMap {
 				fmt.Printf("%s的匹配结果是%s\n", v, submatchs[k])
