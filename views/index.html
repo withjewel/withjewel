@@ -1,0 +1,33 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        <style>
+            * {
+                margin: 0;
+            }
+            div.nav {
+                height: 30px;
+                width: 100%;
+                background-color: #ccc;
+            }
+
+            div.user {
+                height: 100%;
+                position: absolute;
+                right: 10px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="nav">
+            <div class="user">
+                {{if .loginStatus}}
+                    <p>[ {{.loginUser}} ]
+                    <a href="/logout?username={{.loginUser}}">登出</a></p>
+                {{else}}
+                    <p><a href="/login">登录</a></p>
+                {{end}}
+            </div>
+        </div>
+    </body>
+</html>
