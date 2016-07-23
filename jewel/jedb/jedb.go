@@ -3,6 +3,7 @@ package jedb
 import (
 	"container/list"
 	"fmt"
+	"sync"
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jinzhu/gorm"
@@ -12,6 +13,7 @@ import (
  */
 type dbPool struct {
 	unused *list.List
+	lock   sync.Mutex
 }
 
 var dbPoolGlobal dbPool
@@ -34,20 +36,25 @@ func Init() {
  */
 func Accquire() *gorm.DB {
 	for {
+		dbPoolGlobal.lock.Lock()
 		if dbPoolGlobal.unused.Len() > 0 {
 			elem := dbPoolGlobal.unused.Front()
 			dbPoolGlobal.unused.Remove(elem)
+			dbPoolGlobal.lock.Unlock()
 			v := elem.Value
 			db, ok := v.(*gorm.DB)
 			if ok {
 				return db
 			}
 		}
+		dbPoolGlobal.lock.Unlock()
 	}
 }
 
 /*Revert 将Gorm.DB实例归还给Jedb。
  */
 func Revert(gormdb *gorm.DB) {
+	dbPoolGlobal.lock.Lock()
 	dbPoolGlobal.unused.PushBack(gormdb)
+	dbPoolGlobal.lock.Unlock()
 }
