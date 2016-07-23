@@ -26,17 +26,20 @@ div.bg-wrapper-two {
     width: 100%;
     div.bg {
         height: 100%;
-        background-color: #FFF;
     }
+
 }
 
 div.bg-wrapper-three {
     top: 1200px;
-    height: 400px;
+    height: 1200px;
     width: 100%;
     div.bg {
         height: 100%;
-        background-color: #FFFAF0;
+        background-image: url("/static/images/index_book.jpg");
+        background-repeat: no-repeat;
+        background-position: center;
+        background-attachment: fixed;
     }
 }
 
@@ -129,6 +132,7 @@ div.content-one {
         margin: 80px 0 40px 0;
         height: 140px;
         color: #696969;
+        // color: #FFF;
     }
     p {
         font-weight: bold;

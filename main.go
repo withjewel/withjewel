@@ -3,6 +3,7 @@ package main
 import (
 	"withjewel/handler"
 	"withjewel/jewel"
+    "fmt"
 )
 
 func init() {
@@ -16,5 +17,6 @@ func init() {
 }
 
 func main() {
+    fmt.Println("run")
 	jewel.Run(":8080")
 }
