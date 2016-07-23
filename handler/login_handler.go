@@ -42,13 +42,15 @@ func (this *LoginRequestHandler) Post() {
 			datamodel["loginMessage"] = "错误的用户名或密码，或许您需要填写一个电子邮件来加入？"
 		}
 	} else if utils.VerifyEmail(username) {
-		exist, pass := model.VerifyEmail(username, password)
+		exist, x := model.VerifyEmail(username, password)
 		if !exist {
 			datamodel["loginStatus"] = "成功"
 			datamodel["loginMessage"] = "我们已经向" + username + "发送了一封确认电子邮件。"
-		} else if !pass {
+		} else if !x {
 			datamodel["loginStatus"] = "失败"
 			datamodel["loginMessage"] = "错误的密码。"
+		} else {
+			pass = true
 		}
 	} else {
 		datamodel["loginStatus"] = "失败"
