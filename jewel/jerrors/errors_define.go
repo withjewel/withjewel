@@ -1,10 +1,10 @@
 package jerrors
 
 import (
-    "errors"
+	"errors"
 )
 
 var (
-    QueryStringNotFound = errors.New("Query Param Not Found")
-    CookieNotFound = errors.New("Cookie Not Found")
+	QueryStringNotFound = errors.New("Query Param Not Found")
+	CookieNotFound      = errors.New("Cookie Not Found")
 )

@@ -2,11 +2,11 @@ package jewel
 
 import (
 	"fmt"
+	"net/http"
 	"reflect"
 	"regexp"
 	"strconv"
 	"strings"
-	"net/http"
 )
 
 type urlPattern struct {

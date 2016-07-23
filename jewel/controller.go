@@ -1,15 +1,12 @@
 package jewel
 
 import (
-	"withjewel/jewel/jerrors"
 	"fmt"
 	"net/http"
 	"net/url"
 	"strconv"
+	"withjewel/jewel/jerrors"
 )
-
-
-
 
 type ControllerInterface interface {
 	Init(http.ResponseWriter, *http.Request)
@@ -19,20 +16,19 @@ type ControllerInterface interface {
 }
 
 type RequestContext struct {
-	Input *http.Request
+	Input  *http.Request
 	Output http.ResponseWriter
 }
 
 type Controller struct {
-	Name   string
-	Ctx    RequestContext
+	Name string
+	Ctx  RequestContext
 
 	QueryString url.Values
 	Params      map[string]string
 }
 
-
-func (this *Controller) Init(responseWriter http.ResponseWriter, request *http.Request, ) {
+func (this *Controller) Init(responseWriter http.ResponseWriter, request *http.Request) {
 	this.Ctx.Input = request
 	this.Ctx.Output = responseWriter
 
