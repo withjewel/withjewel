@@ -4,32 +4,39 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"strconv"
 	"withjewel/jewel/jerrors"
 )
 
-type Controller struct {
-	Name   string
-	Ctx    RequestContext
-
-	Params url.Values
+type ControllerInterface interface {
+	Init(http.ResponseWriter, *http.Request)
+	InitParams(map[string]string)
+	Get()
+	Post()
 }
 
 type RequestContext struct {
-	Input *http.Request
+	Input  *http.Request
 	Output http.ResponseWriter
 }
 
-type ControllerInterface interface {
-	Init(http.ResponseWriter, *http.Request)
-	Get()
-	Post()
+type Controller struct {
+	Name string
+	Ctx  RequestContext
+
+	QueryString url.Values
+	Params      map[string]string
 }
 
 func (this *Controller) Init(responseWriter http.ResponseWriter, request *http.Request) {
 	this.Ctx.Input = request
 	this.Ctx.Output = responseWriter
 
-	this.Params = request.URL.Query()
+	this.QueryString = request.URL.Query()
+}
+
+func (this *Controller) InitParams(params map[string]string) {
+	this.Params = params
 }
 
 /*Cookie 相关*/
@@ -69,15 +76,33 @@ func (this *Controller) RemoveCookie(name string) {
 	cookie.MaxAge = -200
 }
 
-
-/*Param 相关*/
+/*Query字符串 相关*/
 
 // 取出param的值
-func (this *Controller) ParamString(name string) (string, error) {
-	if param, ok := this.Params[name]; ok {
-		return param[0], nil
+func (this *Controller) Query(name string) (string, error) {
+	if queryString, ok := this.QueryString[name]; ok {
+		return queryString[0], nil
 	}
-	return "", jerrors.QueryParamNotFound
+	return "", jerrors.QueryStringNotFound
+}
+
+/*Url参数 相关*/
+
+func (this *Controller) ParamString(name string) string {
+	if paramStr, ok := this.Params[name]; ok {
+		return paramStr
+	}
+	return ""
+}
+
+func (this *Controller) ParamInt(name string) int {
+	if paramStr, ok := this.Params[name]; ok {
+		value, err := strconv.Atoi(paramStr)
+		if err == nil {
+			return value
+		}
+	}
+	return 0
 }
 
 /*模板处理*/
@@ -92,8 +117,6 @@ func (this *Controller) RenderTpl(tplPath string, model interface{}) {
 func (this *Controller) Redirect(url string) {
 	http.Redirect(this.Ctx.Output, this.Ctx.Input, url, 302)
 }
-
-
 
 // 默认的GET请求处理函数
 func (h *Controller) Get() {

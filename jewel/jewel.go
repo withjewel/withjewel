@@ -7,5 +7,5 @@ import (
 
 func Run(addr string) {
 	jedb.Init()
-	http.ListenAndServe(addr, nil)
+	http.ListenAndServe(addr, DefaultJewelServeMux)
 }

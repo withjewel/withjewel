@@ -4,11 +4,13 @@ import (
 	"net/http"
 )
 
-type Handler struct {
+// JewelHandler
+
+type JewelHandler struct {
 	ControllerInterface
 }
 
-func (h *Handler) ServeHTTP(responseWriter http.ResponseWriter, request *http.Request) {
+func (h *JewelHandler) ServeHTTP(responseWriter http.ResponseWriter, request *http.Request) {
 	h.Init(responseWriter, request)
 	switch {
 	case request.Method == "GET":
@@ -18,7 +20,7 @@ func (h *Handler) ServeHTTP(responseWriter http.ResponseWriter, request *http.Re
 	}
 }
 
-func Router(url string, controllerInterface ControllerInterface) {
-	handler := &Handler{controllerInterface}
-	http.Handle(url, handler)
+func Router(pattern string, controllerInterface ControllerInterface) {
+	handler := &JewelHandler{controllerInterface}
+	DefaultJewelServeMux.Handle(pattern, handler)
 }

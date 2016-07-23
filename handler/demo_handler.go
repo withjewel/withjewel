@@ -1,9 +1,9 @@
 package handler
 
 import (
-	"withjewel/jewel"
-	"time"
 	"fmt"
+	"time"
+	"withjewel/jewel"
 )
 
 type DemoHandler struct {
