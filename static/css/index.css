@@ -1,0 +1,38 @@
+* { margin: 0; }
+
+div.bg-wrapper { position: absolute; z-index: -999; }
+
+div.bg-wrapper-one { height: 500px; width: 100%; }
+div.bg-wrapper-one div.bg { height: 100%; background-color: #6495ED; }
+
+div.bg-wrapper-two { top: 500px; height: 800px; width: 100%; }
+div.bg-wrapper-two div.bg { height: 100%; background-color: #FFF; }
+
+div.bg-wrapper-three { top: 1200px; height: 400px; width: 100%; }
+div.bg-wrapper-three div.bg { height: 100%; background-color: #FFFAF0; }
+
+div.content-container { width: 900px; margin: auto; padding-top: 30px; }
+
+div.header { width: 100%; height: 470px; }
+div.header div.nav { color: #FFF; height: 40px; }
+div.header div.nav h1.title { display: inline-block; color: #FFF; }
+div.header div.nav ul.link { list-style: none; line-height: 40px; float: right; }
+div.header div.nav ul.link li { float: left; min-width: 80px; }
+div.header div.nav ul.link li a { display: inline-block; width: 100%; height: 100%; text-decoration: none; text-align: center; font-weight: bold; color: #FFF; font-size: 20px !important; }
+div.header div.nav ul.link li a:hover { color: rgba(255, 255, 255, 0.7); }
+div.header div.logo-container { width: 100%; height: 60px; }
+div.header div.logo-container div.logo { height: 100%; }
+div.header div.description { color: #FFF; font-size: 19px; text-align: center; margin: 20px 0 80px 0; }
+div.header div.description h1 { margin: 40px 0; text-align: center; }
+div.header div.description p { margin: 15px 0; }
+div.header div.join-us { margin: 20px 0; text-align: center; }
+div.header div.join-us a.btn-join-us { display: inline-block; width: 150px; height: 45px; line-height: 45px; border: 2px solid #FFF; border-radius: 5px; color: #FFF; text-align: center; text-decoration: none; font-size: 30px; }
+
+div.content-one > div { margin: 80px 0 40px 0; height: 140px; color: #696969; }
+div.content-one p { font-weight: bold; }
+div.content-one p.title { font-size: 18px; }
+div.content-one div.left { float: left; width: 40%; text-align: center; }
+div.content-one div.left h2 { margin: 15px 0; }
+div.content-one div.right { float: left; width: 59%; }
+div.content-one div.right ul { padding-left: 15px; }
+div.content-one div.right p { margin: 15px 0; }

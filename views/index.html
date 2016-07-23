@@ -1,32 +1,67 @@
 <html>
     <head>
         <meta charset="utf-8">
-        <style>
-            * {
-                margin: 0;
-            }
-            div.nav {
-                height: 30px;
-                width: 100%;
-                background-color: #ccc;
-            }
-
-            div.user {
-                height: 100%;
-                position: absolute;
-                right: 10px;
-            }
-        </style>
+        <link rel="stylesheet" href="static/css/index.css">
     </head>
     <body>
-        <div class="nav">
-            <div class="user">
-                {{if .loginStatus}}
-                    <p>[ {{.loginUser}} ]
-                    <a href="/logout?username={{.loginUser}}">登出</a></p>
-                {{else}}
-                    <p><a href="/login">登录</a></p>
-                {{end}}
+        <div class="bg-wrapper bg-wrapper-one">
+            <div class="bg"></div>
+        </div>
+        <div class="bg-wrapper bg-wrapper-two">
+            <div class="bg"></div>
+        </div>
+        <div class="bg-wrapper bg-wrapper-three">
+            <div class="bg"></div>
+        </div>
+        <div class="content-container">
+            <div class="header">
+
+                <div class="nav">
+                    <h1 class="title">With-Jewel</h1>
+                    <ul class="link">
+                        <li><a href="">登录</a></li>
+                        <li><a href="">注册</a></li>
+                        <li><a href="">关于</a></li>
+                    </ul>
+                </div>
+
+                <div class="logo-container">
+                    <div class="logo"></div>
+                </div>
+
+                <div class="description">
+                    <h1>专业的阅读门户</h1>
+                    <p>With-jewel 最大的特点就是让文章(内容)的创作者与读者之间,以及读者与</p>
+                    <p>读者之间能联系在一起,分享阅读体验、交流与体会。</p>
+                </div>
+                <div class="join-us">
+                    <a href="" class="btn-join-us">立即加入</a>
+                </div>
+            </div>
+
+            <div class="content-one">
+                <div class="writer">
+                    <div class="left">
+                        <h2>想要成为一名作家？</h2>
+                    </div>
+                    <div class="right">
+                        <p class="title">对于创作者来说，With-Jewel 提供了平台：</p>
+                        <ul>
+                            <li><p>让你们自由、专业地创作，分享知识</p></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="reader">
+                    <div class="left">
+                        <h2>想要成为一名读者？</h2>
+                    </div>
+                    <div class="right">
+                        <p class="title">对于读者来说，With-Jewel 提供了平台：</p>
+                        <ul>
+                            <li><p>让你们与创作者和其他读者方便地交流</p></li>
+                        </ul>
+                    </div>
+                </div>
             </div>
         </div>
     </body>
