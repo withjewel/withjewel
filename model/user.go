@@ -2,8 +2,15 @@ package model
 
 import (
 	"withjewel/jewel/jedb"
-	"withjewel/orm"
+	"database/sql"
 )
+
+
+type User struct {
+	ID                 int
+	Username, Password string
+	Email              sql.NullString
+}
 
 /*Verify 验证凭此用户名和密码是否能够登陆。
  */
@@ -11,7 +18,7 @@ func Verify(username string, password string) bool {
 	db := jedb.Accquire()
 	defer jedb.Revert(db)
 
-	var user orm.User
+	var user User
 	return !db.Find(&user, "username = ? and password = ?", username, password).RecordNotFound()
 }
 
@@ -32,7 +39,7 @@ func VerifyEmail(email string, password string) (bool, bool) {
 	db := jedb.Accquire()
 	defer jedb.Revert(db)
 
-	var user orm.User
+	var user User
 	exist := !db.Find(&user, "email = ?", email).RecordNotFound()
 	if !exist {
 		return false, false

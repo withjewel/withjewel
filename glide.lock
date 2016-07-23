@@ -1,0 +1,19 @@
+hash: 3d185f77b393fdea0de19344df07f0c0a7fc7f2d405864ec13ec2f958f73061b
+updated: 2016-07-23T20:20:05.494154813+08:00
+imports:
+- name: github.com/denisenkom/go-mssqldb
+  version: ""
+- name: github.com/go-sql-driver/mysql
+  version: ""
+- name: github.com/jinzhu/gorm
+  version: ""
+- name: github.com/jinzhu/inflection
+  version: ""
+- name: github.com/lib/pq
+  version: ""
+- name: github.com/mattn/go-sqlite3
+  version: ""
+- name: golang.org/x/crypto/md4
+  version: ""
+  repo: https://golang.org/x/crypto/md4
+devImports: []
