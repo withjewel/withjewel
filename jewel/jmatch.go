@@ -6,6 +6,7 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"net/http"
 )
 
 type urlPattern struct {
@@ -13,7 +14,7 @@ type urlPattern struct {
 	cvtedURL    string // 暂时留作调试用，其实每次创建urlPattern都会调用MustCompiler强制转换为pat
 	pat         *regexp.Regexp
 	groupVarMap map[int]string
-	handler     interface{}
+	handler     http.Handler
 }
 
 func (this *urlPattern) print() {
@@ -47,7 +48,7 @@ func (this *JewelMatchSystem) Print() {
 
 /*AddURL 向JewelMatchSystem 添加一条Jewel-URL模式。
  */
-func (this *JewelMatchSystem) AddURL(url string, h interface{}) {
+func (this *JewelMatchSystem) AddPattern(url string, h http.Handler) {
 	i := 1
 	newURLPattern := &urlPattern{origURL: url, groupVarMap: make(map[int]string), handler: h}
 	newURLPattern.cvtedURL = this.myPat.ReplaceAllStringFunc(url, func(s string) string {
@@ -87,19 +88,23 @@ func (this *JewelMatchSystem) AddURL(url string, h interface{}) {
 /*Match JewelMatchSystem尝试寻找匹配字符串url的Jewel-URL模式，
 若成功匹配，返回该模式注册的处理器；若无模式匹配，返回nil。
 */
-func (this *JewelMatchSystem) Match(url string) interface{} {
+func (this *JewelMatchSystem) Match(url string) (http.Handler, string) {
 	for _, up := range this.handlerURLPatternMap {
-		fmt.Printf("尝试匹配模式%s...\n", up.cvtedURL)
+		//fmt.Printf("尝试匹配模式%s...\n", up.cvtedURL)
 		submatchs := up.pat.FindStringSubmatch(url)
 		if submatchs != nil {
-			for k, v := range up.groupVarMap {
-				fmt.Printf("%s的匹配结果是%s\n", v, submatchs[k])
-				setField(up.handler, v, submatchs[k])
+			if JewelHanler, ok := up.handler.(*JewelHandler); ok {
+				//fmt.Println("find handler")
+				params := make(map[string]string)
+				for k, v := range up.groupVarMap {
+					params[v] = submatchs[k]
+				}
+				JewelHanler.InitParams(params)
 			}
-			return up.handler
+			return up.handler, up.origURL
 		}
 	}
-	return nil
+	return nil, ""
 }
 
 func countGroupBegin(pat string) int {
@@ -201,33 +206,5 @@ func setField(v interface{}, fieldName string, fieldv string) {
 		if err == nil {
 			fieldValue.SetFloat(i)
 		}
-	}
-}
-
-type DemoHandler struct {
-	Page  int
-	Child string
-}
-
-func JMatchDemo() {
-	// 创建JewelMatchSystem的一个实例。
-	jm := NewJewelMatchSystem()
-
-	// pat是一条Jewel-URL模式。
-	pat := `/\123\<user:id>>ffda/\\<Page:int>/123</<1/<Child:id>`
-
-	// v是pat模式的处理器。
-	v := &DemoHandler{}
-
-	// 向匹配系统添加pat模式以及该模式的处理器。
-	jm.AddURL(pat, v)
-
-	// str是一条URL。
-	str := `/\123<user:id>>ffda/\999/123</<1/USER`
-
-	// 寻找匹配str的模式并返回其处理器，然后打印它的信息。
-	handler := jm.Match(str)
-	if handler != nil {
-		fmt.Println(handler)
 	}
 }

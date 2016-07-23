@@ -11,11 +11,11 @@ type IndexHandler struct {
 }
 
 func (this *IndexHandler) Get() {
+    fmt.Println("username=", this.ParamString("username"))
+    fmt.Println("page_id=", this.ParamInt("pid"))
     var datamodel = make(map[string]string)
 
     username, err := this.Cookie("username")
-    fmt.Println(username)
-    fmt.Println(err)
     if err == nil {
         datamodel["loginStatus"] = "true"
         datamodel["loginUser"] = username

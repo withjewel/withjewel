@@ -5,6 +5,6 @@ import (
 )
 
 var (
-    QueryParamNotFound = errors.New("Query Param Not Found")
+    QueryStringNotFound = errors.New("Query Param Not Found")
     CookieNotFound = errors.New("Cookie Not Found")
 )
