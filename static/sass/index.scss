@@ -40,7 +40,9 @@ div.bg-wrapper-three {
         background-repeat: no-repeat;
         background-position: center;
         background-attachment: fixed;
+        filter: alpha(opacity=50);
     }
+
 }
 
 div.content-container {

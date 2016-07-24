@@ -1,4 +1,0 @@
-package: withjewel
-import:
-- package: github.com/go-sql-driver/mysql
-- package: github.com/jinzhu/gorm
