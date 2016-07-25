@@ -2,6 +2,7 @@ package jewel
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 	"path"
 	"sync"
@@ -82,7 +83,10 @@ func (jmx *JewelServeMux) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-	h, _ := jmx.Handler(r)
+	h, pattern := jmx.Handler(r)
+	if pattern != "" {
+		log.Printf("New HTTP request [%s] %s ==> %s", r.Method, r.RequestURI, pattern)
+	}
 	h.ServeHTTP(w, r)
 }
 
@@ -106,6 +110,7 @@ func (jmx *JewelServeMux) Handle(pattern string, handler http.Handler) {
 	}
 }
 
+// Handler is the main implementation of ServeHTTP.
 func (jmx *JewelServeMux) Handler(r *http.Request) (h http.Handler, pattern string) {
 	if r.Method != "CONNECT" {
 		if p := cleanPath(r.URL.Path); p != r.URL.Path {

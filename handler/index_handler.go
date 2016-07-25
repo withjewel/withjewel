@@ -10,5 +10,5 @@ type IndexHandler struct {
 }
 
 func (this *IndexHandler) Get() {
-	this.RenderTpl("views/index.html", nil)
+	this.RenderTpl("views/index.html")
 }
