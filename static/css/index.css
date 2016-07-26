@@ -6,10 +6,10 @@ div.bg-wrapper-one { height: 500px; width: 100%; }
 div.bg-wrapper-one div.bg { height: 100%; background-color: #6495ED; }
 
 div.bg-wrapper-two { top: 500px; height: 800px; width: 100%; }
-div.bg-wrapper-two div.bg { height: 100%; background-color: #FFF; }
+div.bg-wrapper-two div.bg { height: 100%; }
 
-div.bg-wrapper-three { top: 1200px; height: 400px; width: 100%; }
-div.bg-wrapper-three div.bg { height: 100%; background-color: #FFFAF0; }
+div.bg-wrapper-three { top: 1200px; height: 1200px; width: 100%; }
+div.bg-wrapper-three div.bg { height: 100%; background-image: url("/static/images/index_book.jpg"); background-repeat: no-repeat; background-position: center; background-attachment: fixed; filter: alpha(opacity=50); }
 
 div.content-container { width: 900px; margin: auto; padding-top: 30px; }
 

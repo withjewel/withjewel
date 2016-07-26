@@ -1,0 +1,25 @@
+{
+	"comment": "",
+	"ignore": "test",
+	"package": [
+		{
+			"checksumSHA1": "BIY45G2IVrTttD4Rlk9tHwiIOCM=",
+			"path": "github.com/go-sql-driver/mysql",
+			"revision": "3654d25ec346ee8ce71a68431025458d52a38ac0",
+			"revisionTime": "2016-06-02T00:10:21Z"
+		},
+		{
+			"checksumSHA1": "iJZgtJOFkOAD9UnFASfS+HZKHuM=",
+			"path": "github.com/jinzhu/gorm",
+			"revision": "a646b13548ec0aa812fe805b2780f460dd2771b6",
+			"revisionTime": "2016-07-19T23:36:53Z"
+		},
+		{
+			"checksumSHA1": "+T2BNoq6tm0FUIvtGPhxnz56Fu0=",
+			"path": "github.com/jinzhu/inflection",
+			"revision": "8f4d3a0d04ce0b7c0cf3126fb98524246d00d102",
+			"revisionTime": "2016-06-26T22:27:13Z"
+		}
+	],
+	"rootPath": "withjewel"
+}
