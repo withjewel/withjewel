@@ -1,9 +1,6 @@
 package handler
 
-import (
-	"fmt"
-	"withjewel/jewel"
-)
+import "withjewel/jewel"
 
 /*LogoutRequestHandler 处理登出请求 */
 type LogoutRequestHandler struct {
@@ -11,7 +8,7 @@ type LogoutRequestHandler struct {
 }
 
 func (this *LogoutRequestHandler) Get() {
-	this.RemoveCookie("username")
-	fmt.Println(this.Cookie("username"))
+	this.RemCookie("username")
+	this.RemCookie("password")
 	this.Redirect("/index")
 }

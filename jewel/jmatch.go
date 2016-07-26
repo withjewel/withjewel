@@ -94,7 +94,6 @@ func (this *JewelMatchSystem) Match(url string) (http.Handler, string) {
 		submatchs := up.pat.FindStringSubmatch(url)
 		if submatchs != nil {
 			if JewelHanler, ok := up.handler.(*JewelHandler); ok {
-				//fmt.Println("find handler")
 				params := make(map[string]string)
 				for k, v := range up.groupVarMap {
 					params[v] = submatchs[k]
