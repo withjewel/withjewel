@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"reflect"
 	"regexp"
+	"sort"
 	"strconv"
 	"strings"
 )
@@ -17,6 +18,23 @@ type urlPattern struct {
 	handler     http.Handler
 }
 
+type urlPatternNode struct {
+	pat    *urlPattern
+	childs []*urlPatternNode
+}
+
+type urlPatternSlice []*urlPattern
+
+func (s urlPatternSlice) Len() int {
+	return len(s)
+}
+func (s urlPatternSlice) Less(left, right int) bool {
+	return s[left].origURL > s[right].origURL
+}
+func (s urlPatternSlice) Swap(left, right int) {
+	s[left], s[right] = s[right], s[left]
+}
+
 func (this *urlPattern) print() {
 	fmt.Printf("原始URL：%s\n结果URL：%s\n分组索引：%+v\n", this.origURL, this.cvtedURL, this.groupVarMap)
 }
@@ -25,8 +43,99 @@ func (this *urlPattern) print() {
  */
 type JewelMatchSystem struct {
 	regvarTypeMap        map[string]string
-	handlerURLPatternMap []*urlPattern
+	handlerURLPatternMap urlPatternSlice
 	myPat                *regexp.Regexp
+	urlPatternTree       *urlPatternNode
+}
+
+func (this *JewelMatchSystem) convert2Tree(pathsegs []string) *urlPatternNode {
+	var retNode *urlPatternNode
+	i := 1
+	for ipathseg := len(pathsegs) - 1; ipathseg >= 0; ipathseg++ {
+		pathseg := pathsegs[ipathseg]
+
+		newURLPattern := &urlPattern{origURL: pathseg, groupVarMap: make(map[int]string), handler: nil}
+		newURLPatternNode := &urlPatternNode{pat: newURLPattern}
+		if retNode != nil {
+			newURLPatternNode.childs = append(newURLPatternNode.childs, retNode)
+		} else {
+
+		}
+		retNode = newURLPatternNode
+		newURLPattern.cvtedURL = this.myPat.ReplaceAllStringFunc(pathseg, func(s string) string {
+			if len([]rune(s)) == 1 {
+				return regexp.QuoteMeta(s)
+			}
+			switch s {
+			case `\\`:
+				return regexp.QuoteMeta(`\`)
+			case `\<`:
+				return regexp.QuoteMeta(`<`)
+			default:
+				r := []rune(s)
+				nameAndType := string(r[1 : len(r)-1])
+				nameTypePair := strings.Split(nameAndType, ":")
+				name := nameTypePair[0]
+				ty := nameTypePair[1]
+
+				regpat, exist := this.regvarTypeMap[ty]
+				if !exist {
+					fmt.Println("FATAL, the regvar's type doesn't exist")
+					return s
+				}
+
+				newURLPattern.groupVarMap[i] = name
+				i += countGroupBegin(regpat)
+
+				//fmt.Printf("Name: %s, Type: %s RegPat: %s\n", name, ty, regpat)
+				return regpat
+			}
+		})
+		newURLPattern.pat = regexp.MustCompile(newURLPattern.cvtedURL)
+	}
+	return retNode
+}
+
+func (this *JewelMatchSystem) AddPattern2(url string, h http.Handler) {
+	pathsegs := strings.Split(url, "/")
+	curNode := this.urlPatternTree // assert(this.urlPatternTree != nil)
+	for ipathseg, pathseg := range pathsegs {
+		fmt.Printf("[DEBUG] 匹配%s..\n", pathseg)
+		found := false
+		for _, childNode := range curNode.childs {
+			submatchs := childNode.pat.pat.FindStringSubmatch(pathseg)
+			if submatchs != nil && len(submatchs[0]) == len(pathseg) {
+				found = true
+				curNode = childNode
+				break
+			}
+		}
+		if !found {
+			curNode.childs = append(curNode.childs, this.convert2Tree(pathsegs[ipathseg:len(pathsegs)]))
+			return
+		}
+	}
+}
+
+func (this *JewelMatchSystem) Match2(url string) {
+	pathsegs := strings.Split(url, "/")
+	curNode := this.urlPatternTree // assert(this.urlPatternTree != nil)
+	for _, pathseg := range pathsegs {
+		fmt.Printf("[DEBUG] 匹配%s..\n", pathseg)
+		found := false
+		for _, childNode := range curNode.childs {
+			submatchs := childNode.pat.pat.FindStringSubmatch(pathseg)
+			if submatchs != nil && len(submatchs[0]) == len(pathseg) {
+				found = true
+				curNode = childNode
+				break
+			}
+		}
+		if !found {
+			fmt.Printf("URL<%s>在匹配路径<%s>时失败——没有在URL模式树中找到相应的路径。\n", url, pathseg)
+			return
+		}
+	}
 }
 
 /*NewJewelMatchSystem 创建JewelMatchSystem的一个实例。
@@ -83,6 +192,7 @@ func (this *JewelMatchSystem) AddPattern(url string, h http.Handler) {
 	newURLPattern.pat = regexp.MustCompile(newURLPattern.cvtedURL)
 
 	this.handlerURLPatternMap = append(this.handlerURLPatternMap, newURLPattern)
+	sort.Sort(this.handlerURLPatternMap)
 }
 
 /*Match JewelMatchSystem尝试寻找匹配字符串url的Jewel-URL模式，
@@ -92,7 +202,7 @@ func (this *JewelMatchSystem) Match(url string) (http.Handler, string) {
 	for _, up := range this.handlerURLPatternMap {
 		//fmt.Printf("尝试匹配模式%s...\n", up.cvtedURL)
 		submatchs := up.pat.FindStringSubmatch(url)
-		if submatchs != nil {
+		if submatchs != nil && len(submatchs[0]) == len(url) {
 			if JewelHanler, ok := up.handler.(*JewelHandler); ok {
 				params := make(map[string]string)
 				for k, v := range up.groupVarMap {
