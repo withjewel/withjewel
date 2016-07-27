@@ -10,14 +10,6 @@ import (
 	"strings"
 )
 
-type urlPattern struct {
-	origURL     string
-	cvtedURL    string // 暂时留作调试用，其实每次创建urlPattern都会调用MustCompiler强制转换为pat
-	pat         *regexp.Regexp
-	groupVarMap map[int]string
-	handler     http.Handler
-}
-
 type urlPatternNode struct {
 	origURL     string
 	cvtedURL    string // 暂时留作调试用，其实每次创建urlPattern都会调用MustCompiler强制转换为pat
@@ -119,7 +111,7 @@ Jewel-URL是以/分隔的路径，开头和结尾的/会被忽略；连续出现
 模式“/”代表匹配根下的一个空模式。模式“/static”代表匹配根下的名为static的模式。
 Match会返回在匹配到的最后一个模式处注册的处理器。如：
 	/
-		返回为模式“/”（根模式下的空模式）注册的处理器，若模式“/”未注册处理器，返回根的处理器（nil）；
+		返回为模式“/”（根模式下的空模式）注册的处理器，若模式“/”不存在，返回根的处理器（nil）；
 	/static/images/img.jpg
 		Match会先在根模式下寻找匹配static的模式，若没有此模式，返回根的处理器（nil）；
 		若存在static模式，则在static模式下寻找匹配images的模式，若没有此模式，返回static模式注册的处理器；
