@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"reflect"
 	"regexp"
-	"sort"
 	"strconv"
 	"strings"
 )
@@ -28,29 +27,12 @@ type urlPatternNode struct {
 	childs      []*urlPatternNode
 }
 
-type urlPatternSlice []*urlPattern
-
-func (s urlPatternSlice) Len() int {
-	return len(s)
-}
-func (s urlPatternSlice) Less(left, right int) bool {
-	return s[left].origURL > s[right].origURL
-}
-func (s urlPatternSlice) Swap(left, right int) {
-	s[left], s[right] = s[right], s[left]
-}
-
-func (this *urlPattern) print() {
-	fmt.Printf("原始URL：%s\n结果URL：%s\n分组索引：%+v\n", this.origURL, this.cvtedURL, this.groupVarMap)
-}
-
 /*JewelMatchSystem Jewel-URL模式匹配系统。
  */
 type JewelMatchSystem struct {
-	regvarTypeMap        map[string]string
-	handlerURLPatternMap urlPatternSlice
-	myPat                *regexp.Regexp
-	urlPatternTree       *urlPatternNode
+	regvarTypeMap  map[string]string
+	myPat          *regexp.Regexp
+	urlPatternTree *urlPatternNode
 }
 
 /*convert2Tree 获取路径段pathsegs的树的表示方式。
@@ -103,20 +85,16 @@ func (this *JewelMatchSystem) convert2Tree(pathsegs []string, handler http.Handl
 	return retNode
 }
 
+/*AddPattern 向JewelMatchSystem 添加一条Jewel-URL模式。
+ */
 func (this *JewelMatchSystem) AddPattern(url string, h http.Handler) {
 	pathsegs := strings.Split(url, "/")
-	if pathsegs[0] != "" {
-		fmt.Printf("URL必须以/开头\n")
-		return
+	if pathsegs[0] == "" { // 处理'/'开头的情况
+		pathsegs = pathsegs[1:]
 	}
 	curNode := this.urlPatternTree // assert(this.urlPatternTree != nil)
-	for ipathseg, pathseg := range pathsegs[1:len(pathsegs)] {
-		fmt.Printf("[DEBUG] 匹配%s..\n", pathseg)
-		if pathseg == "" {
-			curNode.handler = h
-			continue // 因此，连续的//相当于一个/；也同时处理了/在URL结尾的情况。
-		}
-
+	for ipathseg, pathseg := range pathsegs {
+		//fmt.Printf("[DEBUG] 匹配%s..\n", pathseg)
 		found := false
 		for _, childNode := range curNode.childs {
 			submatchs := childNode.pat.FindStringSubmatch(pathseg)
@@ -132,10 +110,26 @@ func (this *JewelMatchSystem) AddPattern(url string, h http.Handler) {
 			return
 		}
 	}
+	fmt.Printf("在添加URL模式%s时发现重复的URL模式。\n", url)
 }
 
+/*Match JewelMatchSystem尝试寻找匹配字符串url的Jewel-URL模式（以下简称模式）。
+Jewel-URL是以/分隔的路径，开头和结尾的/会被忽略；连续出现的//会被合并为一个/。
+路径以模式“根”开始，所有URL都至少能匹配根；根的处理器为nil并且无法注册处理器。
+模式“/”代表匹配根下的一个空模式。模式“/static”代表匹配根下的名为static的模式。
+Match会返回在匹配到的最后一个模式处注册的处理器。如：
+	/
+		返回为模式“/”（根模式下的空模式）注册的处理器，若模式“/”未注册处理器，返回根的处理器（nil）；
+	/static/images/img.jpg
+		Match会先在根模式下寻找匹配static的模式，若没有此模式，返回根的处理器（nil）；
+		若存在static模式，则在static模式下寻找匹配images的模式，若没有此模式，返回static模式注册的处理器；
+		以此类推……
+*/
 func (this *JewelMatchSystem) Match(url string) (http.Handler, string) {
 	pathsegs := strings.Split(url, "/")
+	if pathsegs[0] == "" { // 处理'/'开头的情况
+		pathsegs = pathsegs[1:]
+	}
 	curNode := this.urlPatternTree // assert(this.urlPatternTree != nil)
 	var matchedPat bytes.Buffer
 	for _, pathseg := range pathsegs {
@@ -159,8 +153,9 @@ func (this *JewelMatchSystem) Match(url string) (http.Handler, string) {
 			}
 		}
 		if !found {
-			fmt.Printf("URL<%s>在匹配路径<%s>时失败——没有在URL模式树中找到相应的路径。\n", url, pathseg)
-			return nil, ""
+			//fmt.Printf("URL<%s>在匹配路径<%s>时失败——没有在URL模式树中找到相应的路径。\n", url, pathseg)
+			//return nil, ""
+			break
 		}
 	}
 	return curNode.handler, matchedPat.String()
@@ -175,67 +170,6 @@ func NewJewelMatchSystem() *JewelMatchSystem {
 	this.myPat = regexp.MustCompile(`\\\\|\\<|<\w+:\w+>|.`)
 	this.urlPatternTree = &urlPatternNode{}
 	return this
-}
-
-/*AddURL 向JewelMatchSystem 添加一条Jewel-URL模式。
- */
-func (this *JewelMatchSystem) AddPattern2(url string, h http.Handler) {
-	i := 1
-	newURLPattern := &urlPattern{origURL: url, groupVarMap: make(map[int]string), handler: h}
-	newURLPattern.cvtedURL = this.myPat.ReplaceAllStringFunc(url, func(s string) string {
-		if len([]rune(s)) == 1 {
-			return regexp.QuoteMeta(s)
-		}
-		switch s {
-		case `\\`:
-			return regexp.QuoteMeta(`\`)
-		case `\<`:
-			return regexp.QuoteMeta(`<`)
-		default:
-			r := []rune(s)
-			nameAndType := string(r[1 : len(r)-1])
-			nameTypePair := strings.Split(nameAndType, ":")
-			name := nameTypePair[0]
-			ty := nameTypePair[1]
-
-			regpat, exist := this.regvarTypeMap[ty]
-			if !exist {
-				fmt.Println("FATAL, the regvar's type doesn't exist")
-				return s
-			}
-
-			newURLPattern.groupVarMap[i] = name
-			i += countGroupBegin(regpat)
-
-			//fmt.Printf("Name: %s, Type: %s RegPat: %s\n", name, ty, regpat)
-			return regpat
-		}
-	})
-	newURLPattern.pat = regexp.MustCompile(newURLPattern.cvtedURL)
-
-	this.handlerURLPatternMap = append(this.handlerURLPatternMap, newURLPattern)
-	sort.Sort(this.handlerURLPatternMap)
-}
-
-/*Match JewelMatchSystem尝试寻找匹配字符串url的Jewel-URL模式，
-若成功匹配，返回该模式注册的处理器；若无模式匹配，返回nil。
-*/
-func (this *JewelMatchSystem) Match2(url string) (http.Handler, string) {
-	for _, up := range this.handlerURLPatternMap {
-		//fmt.Printf("尝试匹配模式%s...\n", up.cvtedURL)
-		submatchs := up.pat.FindStringSubmatch(url)
-		if submatchs != nil && len(submatchs[0]) == len(url) {
-			if JewelHanler, ok := up.handler.(*JewelHandler); ok {
-				params := make(map[string]string)
-				for k, v := range up.groupVarMap {
-					params[v] = submatchs[k]
-				}
-				JewelHanler.InitParams(params)
-			}
-			return up.handler, up.origURL
-		}
-	}
-	return nil, ""
 }
 
 func countGroupBegin(pat string) int {
