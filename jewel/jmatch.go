@@ -125,7 +125,7 @@ func (this *JewelMatchSystem) Match(url string) (http.Handler, string) {
 	curNode := this.urlPatternTree // assert(this.urlPatternTree != nil)
 	var matchedPat bytes.Buffer
 	for _, pathseg := range pathsegs {
-		fmt.Printf("[DEBUG] 尝试匹配路径段%s..\n", pathseg)
+		//fmt.Printf("[DEBUG] 尝试匹配路径段%s..\n", pathseg)
 		found := false
 		for _, childNode := range curNode.childs {
 			submatchs := childNode.pat.FindStringSubmatch(pathseg)
