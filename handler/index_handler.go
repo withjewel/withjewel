@@ -1,6 +1,8 @@
 package handler
 
 import (
+	"fmt"
+	"time"
 	"withjewel/jewel"
 )
 
@@ -10,5 +12,9 @@ type IndexHandler struct {
 }
 
 func (this *IndexHandler) Get() {
+	fmt.Println(this.Query("name"))
+	this.Data["time"] = time.Now()
+	time.Sleep(5 * time.Second)
+	fmt.Println(this.Data)
 	this.RenderTpl("views/index.html")
 }

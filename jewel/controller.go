@@ -7,21 +7,14 @@ import (
 	"withjewel/jewel/jerrors"
 )
 
-type ControllerInterface interface {
-	Init(http.ResponseWriter, *http.Request)
-	InitParams(map[string]string)
-	Get()
-	Post()
-}
-
-type RequestContext struct {
+type Context struct {
 	Input  *http.Request
 	Output http.ResponseWriter
 }
 
 type Controller struct {
 	Name string
-	Ctx  RequestContext
+	Ctx  Context
 
 	QueryString url.Values
 	Params      map[string]string
@@ -90,5 +83,20 @@ func (h *Controller) Get() {
 
 // 默认的POST请求处理函数
 func (h *Controller) Post() {
+	http.Error(h.Ctx.Output, "Method Not Allowed", 405)
+}
+
+// 默认的PUT请求处理函数
+func (h *Controller) Put() {
+	http.Error(h.Ctx.Output, "Method Not Allowed", 405)
+}
+
+// 默认的PATCH请求处理函数
+func (h *Controller) Patch() {
+	http.Error(h.Ctx.Output, "Method Not Allowed", 405)
+}
+
+// 默认的DELETE请求处理函数
+func (h *Controller) Delete() {
 	http.Error(h.Ctx.Output, "Method Not Allowed", 405)
 }

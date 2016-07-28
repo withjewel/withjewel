@@ -130,7 +130,7 @@ func (this *JewelMatchSystem) Match(url string) (http.Handler, string) {
 		for _, childNode := range curNode.childs {
 			submatchs := childNode.pat.FindStringSubmatch(pathseg)
 			if submatchs != nil && len(submatchs[0]) == len(pathseg) {
-				if JewelHanler, ok := childNode.handler.(*JewelHandler); ok {
+				if JewelHanler, ok := childNode.handler.(ControllerInterface); ok {
 					params := make(map[string]string)
 					for k, v := range childNode.groupVarMap {
 						params[v] = submatchs[k]

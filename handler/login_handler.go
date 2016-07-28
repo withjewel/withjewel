@@ -14,6 +14,7 @@ func (this *LoginRequestHandler) Get() {
 
 	this.Data["username"] = username
 	this.Data["password"] = password
+	//fmt.Println(this.Params)
 	this.RenderTpl("views/login.html")
 }
 
